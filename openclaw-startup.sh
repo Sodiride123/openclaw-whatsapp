@@ -14,8 +14,6 @@ echo "Removing any previous OpenClaw files..."
 rm -rf /root/.openclaw
 mkdir -p /root/.openclaw
 ln -sf "${CONFIG_DIR}/openclaw.json" /root/.openclaw/openclaw.json > /dev/null 2>&1
-echo "Installing WhatsApp plugin..."
-openclaw plugins install @openclaw/whatsapp
 echo "Linking service definitions to systemd..."
 ln -sf "${CONFIG_DIR}/openclaw-settings-sync.service" /etc/systemd/system/openclaw-settings-sync.service > /dev/null 2>&1
 ln -sf "${CONFIG_DIR}/openclaw.service" /etc/systemd/system/openclaw.service > /dev/null 2>&1
