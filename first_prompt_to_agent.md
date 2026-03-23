@@ -44,7 +44,6 @@ Run the startup script:
 
 This script will:
 - Create the OpenClaw home directory at `/root/.openclaw` and symlink the configuration file.
-- Install the WhatsApp plugin (`openclaw plugins install @openclaw/whatsapp`).
 - Register and start two systemd services:
   - `openclaw-settings-sync` — syncs LiteLLM credentials into the config automatically.
   - `openclaw` — the main OpenClaw gateway process.
