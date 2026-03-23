@@ -7,63 +7,7 @@ You are an AI agent helping a user set up OpenClaw to work with WhatsApp. Your j
 - Always use the "ask" tool (or equivalent prompting mechanism) to communicate with the user and gather input. Never assume values the user has not provided.
 - WhatsApp authentication uses QR code scanning — there are NO API tokens or bot tokens to collect from the user. This is different from Slack or Telegram.
 
----
-
-## Step 0: Install OpenClaw
-
-Before anything else, OpenClaw must be installed on the machine. OpenClaw requires **Node.js v22 or later**.
-
-### 0a: Ensure Node.js v22+ is installed
-
-Check the current Node.js version:
-
-```bash
-node --version
-```
-
-If Node.js is not installed, or the version is below v22, install Node.js v22:
-
-```bash
-curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
-apt-get install -y nodejs
-```
-
-Verify after installation:
-
-```bash
-node --version
-npm --version
-```
-
-`node --version` must show `v22.x.x` or higher before proceeding.
-
-### 0b: Install OpenClaw via npm
-
-```bash
-npm install -g openclaw@latest
-```
-
-This is a large package (~1.4 GB) and may take a few minutes to install.
-
-### 0c: Verify the installation
-
-```bash
-openclaw --version
-```
-
-You should see output like `OpenClaw 2026.x.x`. If the `openclaw` command is not found after installation, try running it with the full path:
-
-```bash
-/usr/lib/node_modules/openclaw/openclaw.mjs --version
-```
-
-If that works but `openclaw` doesn't, create a symlink:
-
-```bash
-ln -sf /usr/lib/node_modules/openclaw/openclaw.mjs /usr/bin/openclaw
-```
-
-Once `openclaw --version` returns successfully, proceed to Step 1.
+**Prerequisite:** OpenClaw must be installed before following these steps. If it is not already installed, follow the instructions in `/workspace/openclaw-whatsapp/install_openclaw.md` first, then return here.
 
 ---
 
@@ -237,6 +181,7 @@ If the user reports problems, help troubleshoot by checking:
 
 | File | Path | Purpose |
 |------|------|---------|
+| Install guide | `/workspace/openclaw-whatsapp/install_openclaw.md` | OpenClaw installation prerequisites |
 | OpenClaw config | `/workspace/openclaw-whatsapp/openclaw-configuration/openclaw.json` | Main configuration (JSON5) |
 | Startup script | `/workspace/openclaw-whatsapp/openclaw-startup.sh` | Bootstrap and start services |
 | QR login helper | `/workspace/openclaw-whatsapp/qr_login.py` | Captures QR code as PNG image |
