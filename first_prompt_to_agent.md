@@ -11,30 +11,56 @@ You are an AI agent helping a user set up OpenClaw to work with WhatsApp. Your j
 
 ## Step 0: Install OpenClaw
 
-Before anything else, OpenClaw must be installed on the machine. Run:
+Before anything else, OpenClaw must be installed on the machine. OpenClaw requires **Node.js v22 or later**.
+
+### 0a: Ensure Node.js v22+ is installed
+
+Check the current Node.js version:
 
 ```bash
-npm install -g openclaw
+node --version
 ```
 
-Verify the installation:
+If Node.js is not installed, or the version is below v22, install Node.js v22:
 
 ```bash
-openclaw --version
+curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+apt-get install -y nodejs
 ```
 
-You should see a version number like `OpenClaw 2026.x.x`. If the command is not found, ensure Node.js (v18+) and npm are installed first:
+Verify after installation:
 
 ```bash
 node --version
 npm --version
 ```
 
-If Node.js is not installed, install it before proceeding:
+`node --version` must show `v22.x.x` or higher before proceeding.
+
+### 0b: Install OpenClaw via npm
 
 ```bash
-curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
-apt-get install -y nodejs
+npm install -g openclaw@latest
+```
+
+This is a large package (~1.4 GB) and may take a few minutes to install.
+
+### 0c: Verify the installation
+
+```bash
+openclaw --version
+```
+
+You should see output like `OpenClaw 2026.x.x`. If the `openclaw` command is not found after installation, try running it with the full path:
+
+```bash
+/usr/lib/node_modules/openclaw/openclaw.mjs --version
+```
+
+If that works but `openclaw` doesn't, create a symlink:
+
+```bash
+ln -sf /usr/lib/node_modules/openclaw/openclaw.mjs /usr/bin/openclaw
 ```
 
 Once `openclaw --version` returns successfully, proceed to Step 1.
