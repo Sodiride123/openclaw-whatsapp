@@ -1,0 +1,21 @@
+[Unit]
+Description=OpenClaw Settings Sync (populates config from /dev/shm sources)
+Before=openclaw.service
+After=local-fs.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /workspace/openclaw-whatsapp/openclaw-configuration/openclaw-settings-sync.py
+WorkingDirectory=/workspace/openclaw-whatsapp/openclaw-configuration
+
+# Restart policy
+Restart=always
+RestartSec=5
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=openclaw-settings-sync
+
+[Install]
+WantedBy=multi-user.target

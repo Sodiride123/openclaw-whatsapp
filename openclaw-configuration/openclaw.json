@@ -1,0 +1,131 @@
+// OpenClaw Configuration — WhatsApp Channel + Gateway on lan
+// JSON5 format (comments and trailing commas allowed)
+{
+  // ─── Environment & API Keys ───────────────────────────────
+  env: {
+    // Set your LiteLLM API key
+    LITELLM_API_KEY: "PLACEHOLDER_LITELLM_API_KEY",
+  },
+
+  // ─── Model Providers ─────────────────────────────────────────────
+  models: {
+    providers: {
+      litellm: {
+        baseUrl: "PLACEHOLDER_LITELLM_BASE_URL",
+        apiKey: "${LITELLM_API_KEY}",
+        api: "openai-completions",
+        models: [
+          {
+            // Primary model configuration (replace with your chosen model)
+            // Use the exact model name reported by LiteLLM
+            id: "PLACEHOLDER_MODEL_NAME",
+            name: "PLACEHOLDER_MODEL_DISPLAY_NAME",
+            reasoning: true, // Change if model does not support reasoning
+            input: ["text", "image"], // Change if model is not multi-modal
+            contextWindow: 200000, // Change this if necessary to known context limit
+            maxTokens: 32000, // Change this if necessary to increase response length
+          },
+        ],
+      },
+    },
+  },
+
+  // ─── Agent Defaults ───────────────────────────────────────
+  agents: {
+    defaults: {
+      // Workspace directory for agent files, memory, notes, etc.
+      workspace: "/workspace/openclaw-whatsapp/openclaw-files",
+      // Timezone (adjust if requested to user's local timezone)
+      userTimezone: "America/Los_Angeles",
+
+      // Primary model configuration (replace with your chosen model)
+      // Use the exact model name reported by LiteLLM
+      model: {
+        primary: "litellm/PLACEHOLDER_MODEL_NAME",
+      },
+    },
+  },
+
+  // ─── Channels ──────────────────────────────────────────────
+  channels: {
+
+    // ─── WhatsApp (via Baileys / QR code linking) ───────────
+    whatsapp: {
+      enabled: false,
+
+      dmPolicy: "pairing",
+      groupPolicy: "open",
+      groups: {
+        "*": { requireMention: true },
+      },
+
+      textChunkLimit: 4000,
+      chunkMode: "newline",
+      mediaMaxMb: 50,
+      sendReadReceipts: true,
+    },
+  },
+
+  // ─── Gateway & Networking ─────────────────────────────────
+  gateway: {
+    // Port the gateway listens on
+    port: 18789,
+
+    bind: "lan",
+    mode: "local",
+    trustedProxies: ["172.16.0.0/12", "127.0.0.1"],
+    controlUi: {
+      enabled: true,
+      allowedOrigins: [
+        "http://localhost",
+        "https://*.myninja.ai",
+      ],
+      // Skip device pairing for Control UI connections - safe behind proxy
+      dangerouslyDisableDeviceAuth: true,
+      allowInsecureAuth: true,
+    },
+
+    // Authentication for the gateway API / Control UI
+    auth: {
+      mode: "token",
+      token: "PLACEHOLDER_GATEWAY_AUTH_TOKEN",
+    },
+
+    // Hot-reload config changes without restart
+    reload: {
+      mode: "hybrid",
+      debounceMs: 300,
+    },
+  },
+
+  // ─── Session Behavior ─────────────────────────────────────
+  session: {
+    dmScope: "per-channel-peer",
+    reset: {
+      mode: "idle",
+      idleMinutes: 1440, // 24 hours inactivity
+    },
+    resetByType: {
+      thread: {
+        mode: "idle",
+        idleMinutes: 10080, // 7 days inactivity
+      },
+    }
+  },
+
+  // ─── Messages ─────────────────────────────────────────────
+  messages: {
+    ackReaction: "eyes",
+    queue: {
+      mode: "collect",
+      debounceMs: 1000,
+    },
+  },
+
+  // ─── Logging ──────────────────────────────────────────────
+  logging: {
+    level: "info",
+    consoleLevel: "info",
+    consoleStyle: "pretty",
+  },
+}

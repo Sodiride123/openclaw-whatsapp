@@ -1,0 +1,22 @@
+[Unit]
+Description=OpenClaw AI Agent Gateway
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/openclaw gateway run
+Environment=NODE_ENV=production
+WorkingDirectory=/workspace/openclaw-whatsapp/openclaw-configuration
+
+# Restart policy
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=openclaw
+
+[Install]
+WantedBy=multi-user.target
