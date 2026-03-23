@@ -1,11 +1,43 @@
 # OpenClaw WhatsApp Setup — Agent Instructions
 
-You are an AI agent helping a user set up OpenClaw to work with WhatsApp. OpenClaw is already installed on this machine. Your job is to walk the user through each configuration step interactively.
+You are an AI agent helping a user set up OpenClaw to work with WhatsApp. Your job is to walk the user through each configuration step interactively.
 
 **Important context:**
 - The user is a non-technical person interacting with you through a chat interface.
 - Always use the "ask" tool (or equivalent prompting mechanism) to communicate with the user and gather input. Never assume values the user has not provided.
 - WhatsApp authentication uses QR code scanning — there are NO API tokens or bot tokens to collect from the user. This is different from Slack or Telegram.
+
+---
+
+## Step 0: Install OpenClaw
+
+Before anything else, OpenClaw must be installed on the machine. Run:
+
+```bash
+npm install -g openclaw
+```
+
+Verify the installation:
+
+```bash
+openclaw --version
+```
+
+You should see a version number like `OpenClaw 2026.x.x`. If the command is not found, ensure Node.js (v18+) and npm are installed first:
+
+```bash
+node --version
+npm --version
+```
+
+If Node.js is not installed, install it before proceeding:
+
+```bash
+curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+apt-get install -y nodejs
+```
+
+Once `openclaw --version` returns successfully, proceed to Step 1.
 
 ---
 
@@ -55,19 +87,27 @@ Wait for the script to complete and verify both services show as `active (runnin
 
 ## Step 4: Link the WhatsApp account via QR code
 
-This is the most important step. The user needs to scan a QR code with their WhatsApp app to link their bot's phone number to OpenClaw.
+This is the most important step. The user needs to scan a QR code with their WhatsApp app to link their bot's phone number to OpenClaw. Follow this exact sequence:
 
-### 4a: Capture the QR code and present it as an image
+### 4a: Install the Pillow library
 
-**CRITICAL:** The terminal QR code may not display correctly for the user (e.g., the terminal may be too narrow, or the user may be on a device that cannot render it). You MUST use the included helper script to capture the QR code and save it as a PNG image.
-
-First, ensure the `Pillow` library is installed (needed for image generation):
+The QR code helper script requires the Pillow library for image generation. Install it:
 
 ```bash
 pip install Pillow
 ```
 
-Then run the QR login helper script:
+### 4b: Ask the user if they are ready to scan
+
+**Before generating the QR code**, you MUST use the ask tool to ask the user:
+
+> "Are you ready to scan the WhatsApp login QR code? Please have your **bot phone** ready — open WhatsApp on the phone that has the **bot's dedicated phone number** (NOT your personal number), and go to **Settings > Linked Devices > Link a Device** so the camera is ready. The QR code expires quickly, so please be prepared before we proceed. Are you ready?"
+
+Wait for the user to confirm they are ready. Do NOT proceed until they confirm.
+
+### 4c: Generate the QR code
+
+Run the QR login helper script:
 
 ```bash
 python3 /workspace/openclaw-whatsapp/qr_login.py
@@ -76,22 +116,23 @@ python3 /workspace/openclaw-whatsapp/qr_login.py
 This script will:
 - Run `openclaw channels login --channel whatsapp` internally.
 - Capture each QR code displayed in the terminal.
-- Convert the Unicode block characters into scannable PNG images.
-- Save them to `/workspace/openclaw-whatsapp/qr_codes/qr_1.png`, `qr_2.png`, etc.
-- Print the path of each saved image.
+- Convert the Unicode block characters into a scannable PNG image.
+- Save/overwrite the image to `/workspace/openclaw-whatsapp/qr_code.png` (always the latest QR code).
+- The QR codes refresh approximately every 20 seconds and the command times out after about 5 attempts.
 
-The QR codes refresh approximately every 20 seconds and the command times out after about 5 attempts. **Present the latest saved QR code image to the user immediately** so they can scan it before it expires.
+### 4d: Present the QR code image and ask the user to scan
 
-### 4b: Ask the user to scan
+Once the script finishes (either successfully or by timeout), you MUST use the ask tool to:
 
-Use the ask tool to tell the user:
-- "Please scan this QR code with your WhatsApp app. Open WhatsApp on the phone that has the **bot's phone number**, go to **Settings > Linked Devices > Link a Device**, and scan the QR code."
-- Remind the user that they should scan with the **bot's WhatsApp account** (the dedicated number for the bot), NOT their personal WhatsApp.
+1. **Attach the QR code image** at `/workspace/openclaw-whatsapp/qr_code.png` in the ask tool message.
+2. Ask the user: "Please scan this QR code with your bot phone's WhatsApp app (Settings > Linked Devices > Link a Device). Have you finished scanning the code?"
 
-### 4c: Handle success or timeout
+Wait for the user to respond.
 
-- **Success:** The command output will end with a message like `Linked after restart; web session ready.` — proceed to the next step.
-- **Timeout:** If the QR code expires before scanning (error: `status=408 Request Time-out QR refs attempts ended`), re-run the login command and generate a new QR code image. Ask the user to have their phone camera ready before you start.
+- **If the user confirms success:** The script output should show `Linked after restart; web session ready.` — proceed to step 4e.
+- **If the user says it failed or the QR expired:** Go back to step 4b — ask if they are ready again, then re-run the script to generate a new QR code.
+
+### 4e: Restart the gateway and verify
 
 After successful linking, restart the OpenClaw gateway so it picks up the new WhatsApp credentials:
 
@@ -172,7 +213,8 @@ If the user reports problems, help troubleshoot by checking:
 |------|------|---------|
 | OpenClaw config | `/workspace/openclaw-whatsapp/openclaw-configuration/openclaw.json` | Main configuration (JSON5) |
 | Startup script | `/workspace/openclaw-whatsapp/openclaw-startup.sh` | Bootstrap and start services |
-| QR login helper | `/workspace/openclaw-whatsapp/qr_login.py` | Captures QR codes as PNG images |
+| QR login helper | `/workspace/openclaw-whatsapp/qr_login.py` | Captures QR code as PNG image |
+| QR code image | `/workspace/openclaw-whatsapp/qr_code.png` | Latest QR code (overwritten each refresh) |
 | Settings sync | `/workspace/openclaw-whatsapp/openclaw-configuration/openclaw-settings-sync.py` | Auto-populates LiteLLM credentials |
 | Sync service | `/workspace/openclaw-whatsapp/openclaw-configuration/openclaw-settings-sync.service` | Systemd unit for settings sync |
 | Gateway service | `/workspace/openclaw-whatsapp/openclaw-configuration/openclaw.service` | Systemd unit for OpenClaw gateway |
