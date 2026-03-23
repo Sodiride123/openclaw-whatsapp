@@ -13,7 +13,7 @@
       litellm: {
         baseUrl: "PLACEHOLDER_LITELLM_BASE_URL",
         apiKey: "${LITELLM_API_KEY}",
-        api: "openai-completions",
+        api: "anthropic-messages",
         models: [
           {
             // Primary model configuration (replace with your chosen model)
