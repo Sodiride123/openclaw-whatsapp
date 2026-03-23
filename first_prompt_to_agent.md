@@ -59,26 +59,28 @@ This is the most important step. The user needs to scan a QR code with their Wha
 
 ### 4a: Capture the QR code and present it as an image
 
-Run the following command to initiate the WhatsApp login:
+**CRITICAL:** The terminal QR code may not display correctly for the user (e.g., the terminal may be too narrow, or the user may be on a device that cannot render it). You MUST use the included helper script to capture the QR code and save it as a PNG image.
+
+First, ensure the `Pillow` library is installed (needed for image generation):
 
 ```bash
-openclaw channels login --channel whatsapp
+pip install Pillow
 ```
 
-This command will output one or more QR codes in the terminal using Unicode block characters. The QR codes refresh approximately every 20 seconds and the command times out after about 5 attempts.
+Then run the QR login helper script:
 
-**CRITICAL:** The terminal QR code may not display correctly for the user (e.g., the terminal may be too narrow, or the user may be on a device that cannot render it). You MUST convert the QR code into a PNG image file and present that image to the user. Here is how:
+```bash
+python3 /workspace/openclaw-whatsapp/qr_login.py
+```
 
-1. Run the `openclaw channels login --channel whatsapp` command and capture its stdout output.
-2. Look for lines between "Scan this QR in WhatsApp (Linked Devices):" and the next blank line — these are the Unicode block character lines that form the QR code.
-3. Convert the Unicode block characters into a black-and-white PNG image. Each character encodes two vertical pixels:
-   - `█` (full block) = top black, bottom black
-   - `▀` (upper half) = top black, bottom white
-   - `▄` (lower half) = top white, bottom black
-   - ` ` (space) = top white, bottom white
-   - Any other character = treat as black
-   Use a scale factor of at least 8 pixels per module for scannability. You can use Python with the `PIL`/`Pillow` library for this.
-4. Save the image (e.g., `/workspace/openclaw-whatsapp/qr_code.png`) and present it to the user.
+This script will:
+- Run `openclaw channels login --channel whatsapp` internally.
+- Capture each QR code displayed in the terminal.
+- Convert the Unicode block characters into scannable PNG images.
+- Save them to `/workspace/openclaw-whatsapp/qr_codes/qr_1.png`, `qr_2.png`, etc.
+- Print the path of each saved image.
+
+The QR codes refresh approximately every 20 seconds and the command times out after about 5 attempts. **Present the latest saved QR code image to the user immediately** so they can scan it before it expires.
 
 ### 4b: Ask the user to scan
 
@@ -170,6 +172,7 @@ If the user reports problems, help troubleshoot by checking:
 |------|------|---------|
 | OpenClaw config | `/workspace/openclaw-whatsapp/openclaw-configuration/openclaw.json` | Main configuration (JSON5) |
 | Startup script | `/workspace/openclaw-whatsapp/openclaw-startup.sh` | Bootstrap and start services |
+| QR login helper | `/workspace/openclaw-whatsapp/qr_login.py` | Captures QR codes as PNG images |
 | Settings sync | `/workspace/openclaw-whatsapp/openclaw-configuration/openclaw-settings-sync.py` | Auto-populates LiteLLM credentials |
 | Sync service | `/workspace/openclaw-whatsapp/openclaw-configuration/openclaw-settings-sync.service` | Systemd unit for settings sync |
 | Gateway service | `/workspace/openclaw-whatsapp/openclaw-configuration/openclaw.service` | Systemd unit for OpenClaw gateway |
