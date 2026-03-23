@@ -99,7 +99,7 @@ pip install Pillow
 
 ### 4b: Ask the user if they are ready to scan
 
-**Before generating the QR code**, you MUST use the ask tool to ask the user:
+**Before generating the QR code**, you MUST use the <ask> tool to ask the user:
 
 > "Are you ready to scan the WhatsApp login QR code? Please have your **bot phone** ready — open WhatsApp on the phone that has the **bot's dedicated phone number** (NOT your personal number), and go to **Settings > Linked Devices > Link a Device** so the camera is ready. The QR code expires quickly, so please be prepared before we proceed. Are you ready?"
 
@@ -107,7 +107,7 @@ Wait for the user to confirm they are ready. Do NOT proceed until they confirm.
 
 ### 4c: Generate the QR code
 
-Run the QR login helper script:
+ONLY Run the QR login helper script:
 
 ```bash
 python3 /workspace/openclaw-whatsapp/qr_login.py
@@ -122,7 +122,7 @@ This script will:
 
 ### 4d: Present the QR code image and ask the user to scan
 
-Once the script finishes (either successfully or by timeout), you MUST use the ask tool to:
+Once the script finishes (either successfully or by timeout), you MUST use the <ask> tool to:
 
 1. **Attach the QR code image** at `/workspace/openclaw-whatsapp/qr_code.png` in the ask tool message.
 2. Ask the user: "Please scan this QR code with your bot phone's WhatsApp app (Settings > Linked Devices > Link a Device). Have you finished scanning the code?"
