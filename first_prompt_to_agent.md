@@ -53,6 +53,23 @@ Wait for the script to complete and verify both services show as `active (runnin
 - `journalctl -u openclaw-settings-sync -f` (settings sync logs)
 - `journalctl -u openclaw -f` (gateway logs)
 
+### 3a: Sync the config and restart the gateway
+
+The gateway may start before the settings-sync service finishes populating the config, causing placeholder values to get baked into the runtime config. To avoid this, always copy the updated workspace config and restart:
+
+```bash
+cp /workspace/openclaw-whatsapp/openclaw-configuration/openclaw.json /root/.openclaw/openclaw.json
+systemctl restart openclaw
+```
+
+Then verify the gateway is running with the correct model:
+
+```bash
+journalctl -u openclaw --no-pager -n 15
+```
+
+Look for `agent model: litellm/<real-model-name>` (not `PLACEHOLDER_MODEL_NAME`).
+
 ---
 
 ## Step 4: Link the WhatsApp account via QR code
