@@ -53,6 +53,8 @@ ln -sf /usr/lib/node_modules/openclaw/openclaw.mjs /usr/bin/openclaw
 ```
 
 echo "Installing WhatsApp plugin..."
+```bash
 openclaw plugins install @openclaw/whatsapp
+```
 
 Once `openclaw --version` returns successfully, proceed to `first_prompt_to_agent.md` for the WhatsApp setup steps.
