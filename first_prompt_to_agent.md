@@ -139,13 +139,17 @@ Look for a line like `[whatsapp] [default] starting provider (+XXXXXXXXXXXX)` an
 
 ## Step 5: Expose the dashboard link
 
-The OpenClaw Control UI is available on port 18789. Expose a web link to the user and provide them with a clickable markdown link in the format:
+The OpenClaw Control UI is available on port 18789. The token must be included in the URL as a query parameter so the user auto-logs in without a login popup.
+
+**Always** provide the URL in this exact format (with the token embedded):
 
 ```
 <exposed_url>/?token=<generated_token>
 ```
 
-Where `<exposed_url>` is the externally reachable URL for port 18789, and `<generated_token>` is the gateway auth token you generated in Step 2.
+Where `<exposed_url>` is the externally reachable URL for port 18789, and `<generated_token>` is the gateway auth token from `gateway.auth.token` in the config.
+
+**Do NOT** give the user a URL without the `?token=` parameter — they will get a login popup and not know what to enter.
 
 ---
 
