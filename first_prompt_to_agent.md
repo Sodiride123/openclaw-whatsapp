@@ -94,22 +94,23 @@ Wait for the user to confirm they are ready. Do NOT proceed until they confirm.
 
 ### 4c: Generate the QR code
 
-ONLY Run the QR login helper script:
+Run the QR login helper script:
 
 ```bash
 python3 /workspace/openclaw-whatsapp/qr_login.py
 ```
 
 This script will:
-- Run `openclaw channels login --channel whatsapp` internally.
-- Capture each QR code displayed in the terminal.
-- Convert the Unicode block characters into a scannable PNG image.
-- Save/overwrite the image to `/workspace/openclaw-whatsapp/qr_code.png` (always the latest QR code).
-- The QR codes refresh approximately every 20 seconds and the command times out after about 5 attempts.
+- Run `openclaw channels login --channel whatsapp` in the background.
+- Capture the **first** QR code displayed in the terminal.
+- Convert it into a scannable PNG image at `/workspace/openclaw-whatsapp/qr_code.png`.
+- **Exit immediately** after saving the image (the login process continues running in the background).
+
+The script returns fast so you can present the image to the user right away. The QR code remains valid for scanning while the background process is running.
 
 ### 4d: Present the QR code image and ask the user to scan
 
-Once the script finishes (either successfully or by timeout), you MUST use the `<ask>` tool to:
+Immediately after the script finishes, you MUST use the `<ask>` tool to:
 
 1. **Attach the QR code image** at `/workspace/openclaw-whatsapp/qr_code.png` in the ask tool message.
 2. Ask the user: "Please scan this QR code with your bot phone's WhatsApp app (Settings > Linked Devices > Link a Device). Have you finished scanning the code?"
